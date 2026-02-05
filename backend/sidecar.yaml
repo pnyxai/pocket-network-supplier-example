@@ -1,0 +1,23 @@
+log_level: "info"
+# Here is where the Poncho will respond to (where the relayminer will talk to)
+server:
+    host: "0.0.0.0"
+    port: 8000
+# This is the backend of vLLM, deployed in the docker-compose network
+vllm_backend:
+    host: "http://vllm-relayminer"
+    port: 8000
+    # This is your real model name, this is used to patch incoming requests
+    model_name_override: "meta-llama/Llama-3.2-1B-Instruct"
+    # This is nice extra, logprobs will spike your VRAM usage (and leak model data), so you can just reject any request that asks for logprobs.
+    allow_logprobs: false
+    crop_max_tokens: true
+routing:
+    timeout_seconds: 600
+    max_payload_size_mb: 10
+model_config_data:
+    # This will be the name that you will be using to respond requests, it will replace whatever comes from vLLM response
+    model_public_name : "pocket_network"
+    # This can be used to limit your context length when serving the Pocket Network
+    max_position_embeddings : 2048
+    max_tokens: 2047

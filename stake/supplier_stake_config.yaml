@@ -1,0 +1,11 @@
+owner_address: pokt19a3t4yunp0dlpfjrp7qwnzwlrzd5fzs2gjaaaj
+operator_address: pokt19a3t4yunp0dlpfjrp7qwnzwlrzd5fzs2gjaaaj
+stake_amount: 59500000001upokt
+default_rev_share_percent:
+  pokt1wvn4a8kj4mfnq0cjakadskxwr2zkev35psjxh9: 99
+  pokt19a3t4yunp0dlpfjrp7qwnzwlrzd5fzs2gjaaaj: 1
+services:
+  - service_id: "text-generation"
+    endpoints:
+      - publicly_exposed_url: https://nodes.pnyxai.com
+        rpc_type: JSON_RPC

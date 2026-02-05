@@ -1,0 +1,8 @@
+# Format: list of hex-encoded secp256k1 private keys
+# The operator address is derived from each key automatically.
+#
+# pocketd keys export --unarmored-hex --unsafe <account_name> 
+
+keys:
+  # supplier1 - pokt19a3t4yunp0dlpfjrp7qwnzwlrzd5fzs2gjaaaj
+  - "cd41a98ac7ac3b190c345b88e2885422d7bb553c59bca03c6e2618d49f8b1c06"

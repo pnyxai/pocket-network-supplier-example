@@ -1,0 +1,77 @@
+services:
+
+  # Redis - Shared state and message broker
+  # NOTE: Redis 8.2+ required for XACKDEL command (stream auto-cleanup)
+  redis:
+    image: redis:8.4-alpine
+    container_name: prm-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    command: redis-server --appendonly yes --maxmemory 512mb --maxmemory-policy allkeys-lru
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+    networks:
+      - pocket-network
+
+  # Miner - Stateful claim/proof submitter
+  miner:
+    image: ghcr.io/pokt-network/pocket-relay-miner:rc
+    container_name: prm-miner
+    ports:
+      - "9092:9092"    # Metrics
+      - "6065:6065"    # pprof
+    volumes:
+      - ./config/miner-config.yaml:/config/config.yaml:ro
+      - ./config/supplier-keys.yaml:/keys/supplier-keys.yaml:ro
+    command: ["miner", "--config", "/config/config.yaml"]
+    depends_on:
+      redis:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9092/metrics"]
+      interval: 10s
+      timeout: 5s
+      retries: 20
+      start_period: 30s
+    networks:
+      - pocket-network
+
+  # Relayer - Stateless relay processor
+  relayer:
+    image: ghcr.io/pokt-network/pocket-relay-miner:rc
+    container_name: prm-relayer
+    ports:
+      - "8080:8080"    # Relay HTTP
+      - "8081:8081"    # Health check
+      - "9090:9090"    # Metrics
+      - "6060:6060"    # pprof
+    volumes:
+      - ./config/relayer-config.yaml:/config/config.yaml:ro
+      - ./config/supplier-keys.yaml:/keys/supplier-keys.yaml:ro
+    command: ["relayer", "--config", "/config/config.yaml"]
+    depends_on:
+      redis:
+        condition: service_healthy
+      miner:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8081/health"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+      start_period: 30s
+    networks:
+      - pocket-network
+
+networks:
+  pocket-network:
+    name: pokt-relayminer-ai
+    driver: bridge
+
+volumes:
+  redis-data:
