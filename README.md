@@ -1,4 +1,4 @@
-# Pocket Network Supplier Example
+# Pocket Network AI Supplier Example
 
 ![Join the network...](./assets/banner.png)
 
