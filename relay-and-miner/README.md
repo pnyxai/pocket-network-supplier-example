@@ -29,7 +29,7 @@ pocket_node:
   grpc_insecure: false
 ```
 
-Also, here you define can applications that pay your supplier via `known_applications` (this is optional but helps):
+Also, here you define applications that pay your supplier via `known_applications` (this is optional but helps by doing a warm-start of their sessions):
 
 ```yaml
 known_applications:
